@@ -1,4 +1,3 @@
-import React from "react";
 import * as ActionTypes from "../../basic/constants/actionTypes";
 
 const initialState = {
@@ -7,35 +6,26 @@ const initialState = {
   usersList: [],
   userDetailsLoading: false,
   userDetails: [],
-  usersIds: [],
-};
-
-const setUsersIds = (userId) => {
-  if (initialState.usersIds.length === 0) {
-    initialState.usersIds.push(userId);
-    return true;
-  } else if (!initialState.usersIds.includes(userId)) {
-    initialState.usersIds.push(userId);
-    return true;
-  } else {
-    return false;
-  }
 };
 
 // User List Operations
-const getUserListRequest = (state, action) => ({
-  ...state,
-  userLoading: true,
-  userDetailsLoading: true,
-  error: null,
-});
+const getUserListRequest = (state, action) => {
+  return {
+    ...state,
+    userLoading: true,
+    userDetailsLoading: true,
+    error: null,
+  };
+};
 const getUserListSuccess = (state, action) => {
   let payload = {};
   if (action.payload.usersList) {
-    payload = { usersList: action.payload.usersList };
+    payload = {
+      usersList: action.payload.usersList,
+      userDetails: [],
+    };
   } else if (action.payload.userDetails) {
-    const updateUserDetails = setUsersIds(action.payload.userDetails.id);
-    payload = updateUserDetails && {
+    payload = {
       userDetails: [...state.userDetails, action.payload.userDetails],
     };
   }

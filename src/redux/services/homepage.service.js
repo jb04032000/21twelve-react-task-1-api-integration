@@ -2,11 +2,13 @@ import { octokit } from "../../config/octokit";
 
 // get user list
 export async function getUsersList(payload) {
-  const url = payload ? `GET /users/${payload}` : "GET /users";
-  const params = payload ? {} : { per_page: 100 };
+  const url =
+    payload && typeof payload === "object"
+      ? `GET /users?since=${Number(payload.since)}&per_page=10`
+      : `GET /users/${payload}`;
 
   return await octokit
-    .request(url, params)
+    .request(url)
     .then((response) => {
       if (response.status === 200) {
         return {

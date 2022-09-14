@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loader } from "../../basic/helpers";
 import { getUsersList } from "../../redux/actions/homePageActions";
 import "../../styles/HomePage.css";
+import "react-bootstrap-table-next/dist/react-bootstrap-table2.css";
 
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
-const pagination = paginationFactory({
-  sizePerPageList: [{ text: "7", value: 7 }],
-});
+const initialUserId = 1;
 const renderCellData = (cell) =>
   cell ? cell : <span className="text-danger">NA</span>;
 const columns = [
@@ -17,7 +16,6 @@ const columns = [
     dataField: "id",
     text: "User ID",
     formatter: renderCellData,
-    sort: true,
   },
   {
     dataField: "login",
@@ -52,7 +50,6 @@ const columns = [
 ];
 
 let usersIds = [];
-let usersData = [];
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -68,6 +65,31 @@ const HomePage = () => {
   const userDetails = useSelector(
     (state) => state.rootReducer.homePageReducer?.userDetails
   );
+  const [usersData, setUsersData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const pagination = paginationFactory({
+    page: currentPage,
+    sizePerPage: 10,
+    totalSize: 100,
+    showTotal: true,
+    alwaysShowAllBtns: false,
+    onPageChange: function (page, sizePerPage) {
+      setCurrentPage(page);
+    },
+    hideSizePerPage: true,
+  });
+  const onTableChange = (type, newState) => {
+    if (type === "pagination") {
+      if (Number(newState.page) === 1) {
+        dispatch(getUsersList({ since: initialUserId }));
+        usersIds = [];
+      } else {
+        dispatch(getUsersList({ since: newState.data.at(-1).id }));
+        usersIds = [];
+      }
+    }
+  };
 
   const renderUsersData = () => {
     if (usersListLoader || userDetailsLoading) {
@@ -78,8 +100,12 @@ const HomePage = () => {
       return (
         <div className="container mb-5 table_container">
           <BootstrapTable
-            bordered={false}
+            hover
             striped
+            bootstrap4
+            remote={{ pagination: true, filter: false, sort: true }}
+            onTableChange={onTableChange}
+            bordered={false}
             keyField="id"
             data={usersData}
             columns={columns}
@@ -91,13 +117,15 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    usersList.length === 0 && dispatch(getUsersList());
+    usersList.length === 0 && dispatch(getUsersList({ since: initialUserId }));
   }, []);
 
   useEffect(() => {
     if (usersList.length > 0) {
       usersList.forEach((ele) => {
         dispatch(getUsersList(ele.login));
+        usersIds = [];
+        setUsersData([]);
       });
     }
   }, [usersList]);
@@ -105,11 +133,14 @@ const HomePage = () => {
   useEffect(() => {
     if (userDetails.length > 0) {
       userDetails.forEach((data) => {
-        if (usersIds === 0) {
+        if (!usersIds.includes(data.id)) {
           usersIds.push(data.id);
-        } else if (!usersIds.includes(data.id)) {
-          usersIds.push(data.id);
-          usersData.push(data);
+          setUsersData((prev) => {
+            let tempData = [...prev];
+            tempData.push(data);
+            tempData.sort((a, b) => a.id - b.id);
+            return tempData;
+          });
         }
       });
     }

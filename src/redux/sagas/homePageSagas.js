@@ -10,9 +10,10 @@ function* workerGetUsersList(action) {
     const res_status = res_body.success;
 
     if (res_status) {
-      const payload = action.payload
-        ? { userDetails: res_body.data }
-        : { usersList: res_body.data };
+      const payload =
+        typeof action.payload === "object"
+          ? { usersList: res_body.data }
+          : { userDetails: res_body.data };
       yield put({
         type: ActionTypes.GET_USERS_LIST_SUCCESS,
         payload,
