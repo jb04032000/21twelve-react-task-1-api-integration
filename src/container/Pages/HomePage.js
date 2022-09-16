@@ -9,6 +9,10 @@ import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
 const initialUserId = 1;
+const headerStyle = () => ({
+  width: "90px",
+  textAlign: "center",
+});
 const renderCellData = (cell) =>
   cell ? cell : <span className="text-danger">NA</span>;
 const columns = [
@@ -16,36 +20,43 @@ const columns = [
     dataField: "id",
     text: "User ID",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "login",
     text: "User Name",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "name",
     text: "Name",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "location",
     text: "Location",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "public_repos",
     text: "Public Repo",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "followers",
     text: "Followers",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
   {
     dataField: "following",
     text: "Following",
     formatter: renderCellData,
+    headerStyle: headerStyle,
   },
 ];
 

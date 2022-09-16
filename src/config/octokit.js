@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
 export const octokit = new Octokit({
-  auth: "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",
+  auth: "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",
   // auth: process.env.REACT_APP_GH,
 });
