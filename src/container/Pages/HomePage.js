@@ -127,7 +127,37 @@ const HomePage = () => {
     }
   };
 
-  useMemo(() => {
+  // useMemo(() => {
+  //   if (userDetails.length > 0) {
+  //     userDetails.forEach((data) => {
+  //       if (!usersIds.includes(data.id)) {
+  //         usersIds.push(data.id);
+  //         setUsersData((prev) => {
+  //           let tempData = [...prev];
+  //           tempData.push(data);
+  //           tempData.sort((a, b) => a.id - b.id);
+  //           return tempData;
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [userDetails]);
+
+  // useMemo(() => {
+  //   if (usersList.length > 0) {
+  //     usersList.forEach((ele) => {
+  //       dispatch(getUsersList(ele.login));
+  //       usersIds = [];
+  //       setUsersData([]);
+  //     });
+  //   }
+  // }, [usersList]);
+
+  useEffect(() => {
+    usersList.length === 0 && dispatch(getUsersList({ since: initialUserId }));
+  }, []);
+
+  useEffect(() => {
     if (userDetails.length > 0) {
       userDetails.forEach((data) => {
         if (!usersIds.includes(data.id)) {
@@ -143,7 +173,7 @@ const HomePage = () => {
     }
   }, [userDetails]);
 
-  useMemo(() => {
+  useEffect(() => {
     if (usersList.length > 0) {
       usersList.forEach((ele) => {
         dispatch(getUsersList(ele.login));
@@ -152,10 +182,6 @@ const HomePage = () => {
       });
     }
   }, [usersList]);
-
-  useEffect(() => {
-    usersList.length === 0 && dispatch(getUsersList({ since: initialUserId }));
-  }, []);
 
   return (
     <div className="container mb-5 ">
