@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loader } from "../../basic/helpers";
 import { getUsersList } from "../../redux/actions/homePageActions";
@@ -127,21 +127,7 @@ const HomePage = () => {
     }
   };
 
-  useEffect(() => {
-    usersList.length === 0 && dispatch(getUsersList({ since: initialUserId }));
-  }, []);
-
-  useEffect(() => {
-    if (usersList.length > 0) {
-      usersList.forEach((ele) => {
-        dispatch(getUsersList(ele.login));
-        usersIds = [];
-        setUsersData([]);
-      });
-    }
-  }, [usersList]);
-
-  useEffect(() => {
+  useMemo(() => {
     if (userDetails.length > 0) {
       userDetails.forEach((data) => {
         if (!usersIds.includes(data.id)) {
@@ -156,6 +142,20 @@ const HomePage = () => {
       });
     }
   }, [userDetails]);
+
+  useMemo(() => {
+    if (usersList.length > 0) {
+      usersList.forEach((ele) => {
+        dispatch(getUsersList(ele.login));
+        usersIds = [];
+        setUsersData([]);
+      });
+    }
+  }, [usersList]);
+
+  useEffect(() => {
+    usersList.length === 0 && dispatch(getUsersList({ since: initialUserId }));
+  }, []);
 
   return (
     <div className="container mb-5 ">
